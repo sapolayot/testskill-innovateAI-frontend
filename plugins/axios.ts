@@ -22,6 +22,17 @@ export default defineNuxtPlugin(() => {
         return req;
     });
 
+    api.interceptors.response.use(
+        (response) => response,
+        (error) => {
+            if (error.response && error.response.status === 401) {
+                const access_token = useCookie("access_token");
+                access_token.value = null;
+            }
+            return Promise.reject(error);
+        }
+    );
+
     return {
         provide: {
             api,
